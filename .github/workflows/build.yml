@@ -56,9 +56,8 @@ jobs:
       - name: Setup Docker
         uses: docker/setup-docker-action@v4.7.0
         with:
-          version: "29.2.1"
+          version: "28.5.2"
           set-host: true
-          daemon-config: '{"features": {"containerd-snapshotter": false}}'
 
       - name: List Docker Contexts
         shell: bash
