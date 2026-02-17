@@ -55,7 +55,7 @@ jobs:
 
       - name: Stop default Docker Daemon
         shell: bash
-        run: systemctl stop docker.service
+        run: sudo systemctl stop docker.service
 
       - name: Setup Docker
         uses: docker/setup-docker-action@v4.7.0
