@@ -53,6 +53,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Stop default Docker Daemon
+        shell: bash
+        run: systemctl stop docker.service
+
       - name: Setup Docker
         uses: docker/setup-docker-action@v4.7.0
         with:
@@ -76,7 +80,17 @@ jobs:
         shell: bash
         run: ./mvnw -B -ntp -DskipTests spring-boot:build-image "-Dimage.platform=${{ matrix.platform }}"
 
-      - name: Show Debug Logs
+      - name: Show Debug Logs 1
         shell: bash
         if: always()
         run: journalctl -u docker.service
+
+      - name: Show Debug Logs 2
+        shell: bash
+        if: always()
+        run: cat /var/log/messages
+
+      - name: Show Debug Logs 3
+        shell: bash
+        if: always()
+        run: cat /var/log/daemon.log
