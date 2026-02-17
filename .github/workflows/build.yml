@@ -53,7 +53,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Stop default Docker Daemon
+      - id: docker
+        name: Stop default Docker Daemon
         shell: bash
         run: sudo systemctl stop docker.service
 
@@ -79,3 +80,5 @@ jobs:
       - name: Build Docker Image
         shell: bash
         run: ./mvnw -B -ntp -DskipTests spring-boot:build-image "-Dimage.platform=${{ matrix.platform }}"
+        env:
+          DOCKER_HOST: ${{ steps.docker.outputs.sock }}
