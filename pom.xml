@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.9</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>de.darkatra</groupId>
+    <artifactId>paketo-docker-29-arm-issue</artifactId>
+    <version>0.0.1</version>
+
+    <name>paketo-docker-29-arm-issue</name>
+    <description>
+        Reproducer for the issue described in:
+        https://github.com/paketo-buildpacks/builder-noble-java-tiny/issues/191#issuecomment-3913492921.
+    </description>
+
+    <properties>
+        <java.version>21</java.version>
+        <image.platform>linux/amd64</image.platform> <!-- overridden in github workflow -->
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>${project.artifactId}:${project.version}</name>
+                        <builder>paketobuildpacks/builder-noble-java-tiny:0.0.102</builder>
+                        <env>
+                            <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                        </env>
+                    </image>
+                    <imagePlatform>${image.platform}</imagePlatform>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

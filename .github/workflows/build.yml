@@ -1,0 +1,76 @@
+name: Build
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup Java
+        uses: actions/setup-java@v5.2.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Tests
+        run: ./mvnw -B -ntp clean verify
+
+  build-docker-image:
+    name: Build Docker Image
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: "ubuntu-24.04"
+            platform: "linux/amd64"
+            file-name: "amd64"
+          - os: "ubuntu-24.04-arm"
+            platform: "linux/arm64"
+            file-name: "arm64"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Setup Java
+        uses: actions/setup-java@v5.2.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Setup Docker
+        uses: docker/setup-docker-action@v4.7.0
+        with:
+          version: "29.2.1"
+          set-host: true
+
+      - name: List Docker Contexts
+        shell: bash
+        run: docker context ls
+
+      - name: Docker Info
+        shell: bash
+        run: docker info
+
+      - name: Print DOCKER_HOST
+        shell: bash
+        run: echo $DOCKER_HOST
+
+      - name: Build Docker Image
+        shell: bash
+        run: ./mvnw -B -ntp -DskipTests spring-boot:build-image "-Dimage.platform=${{ matrix.platform }}"
