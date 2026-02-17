@@ -79,18 +79,3 @@ jobs:
       - name: Build Docker Image
         shell: bash
         run: ./mvnw -B -ntp -DskipTests spring-boot:build-image "-Dimage.platform=${{ matrix.platform }}"
-
-      - name: Show Debug Logs 1
-        shell: bash
-        if: always()
-        run: journalctl -u docker.service
-
-      - name: Show Debug Logs 2
-        shell: bash
-        if: always()
-        run: cat /var/log/messages
-
-      - name: Show Debug Logs 3
-        shell: bash
-        if: always()
-        run: cat /var/log/daemon.log
