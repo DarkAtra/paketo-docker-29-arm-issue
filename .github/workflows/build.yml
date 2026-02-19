@@ -57,13 +57,19 @@ jobs:
         shell: bash
         run: sudo systemctl stop docker.service
 
-      - id: docker
-        name: Setup Docker
-        uses: docker/setup-docker-action@v4.7.0
-        with:
-          version: "28.0.4"
-          set-host: true
-          daemon-config: '{"debug": true, "storage-driver":"overlay2", "features": {"containerd-snapshotter": false}}'
+      - name: Print DOCKER_HOST
+        shell: bash
+        run: echo $DOCKER_HOST
+
+      - name: Setup Docker
+        shell: bash
+        run: |
+          curl -fsSL https://get.docker.com -o ${{ runner.temp }}/get-docker.sh
+          sh ${{ runner.temp }}/get-docker.sh
+
+      - name: Print DOCKER_HOST
+        shell: bash
+        run: echo $DOCKER_HOST
 
       - name: List Docker Contexts
         shell: bash
@@ -80,5 +86,3 @@ jobs:
       - name: Build Docker Image
         shell: bash
         run: ./mvnw -B -ntp -DskipTests spring-boot:build-image "-Dimage.platform=${{ matrix.platform }}"
-        env:
-          DOCKER_HOST: ${{ steps.docker.outputs.sock }}
