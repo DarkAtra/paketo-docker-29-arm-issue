@@ -63,7 +63,7 @@ jobs:
         with:
           version: "29.2.1"
           set-host: true
-          daemon-config: '{"debug": true}'
+          daemon-config: '{"debug": true, "storage-driver":"overlay2"}'
 
       - name: List Docker Contexts
         shell: bash
